@@ -228,7 +228,9 @@
                     console.debug('ReconnectingWebSocket', 'connection-timeout', self.url);
                 }
                 timedOut = true;
-                localWs.close();
+                if (ws && ws.readyState === WebSocket.CLOSING) {
+                    localWs.close();
+                }
                 timedOut = false;
             }, self.timeoutInterval);
 
@@ -320,7 +322,7 @@
                 code = 1000;
             }
             forcedClose = true;
-            if (ws) {
+            if (ws && ws.readyState === WebSocket.CLOSING) {
                 ws.close(code, reason);
             }
         };
@@ -330,7 +332,7 @@
          * For example, if the app suspects bad data / missed heart beats, it can try to refresh.
          */
         this.refresh = function() {
-            if (ws) {
+            if (ws && ws.readyState === WebSocket.CLOSING) {
                 ws.close();
             }
         };
